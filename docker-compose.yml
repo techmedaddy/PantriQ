@@ -1,0 +1,104 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    image: pantriq-frontend
+    ports:
+      - "41803:80" # Random port mapping for frontend
+    depends_on:
+      - backend
+    networks:
+      - pantriq-network
+
+  backend:
+    build:
+      context: ./backend
+    image: pantriq-backend
+    ports:
+      - "49291:4000" # Random port mapping for backend
+    environment:
+      DATABASE_URL: postgres://admin:password@db:5432/pantriq_db
+      REDIS_HOST: redis
+      KAFKA_BROKER: kafka:9092
+      NODE_ENV: production
+    depends_on:
+      - db
+      - redis
+      - kafka
+    networks:
+      - pantriq-network
+
+  db:
+    image: postgres:latest
+    container_name: pantriq-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pantriq_db
+    ports:
+      - "56781:5432" # Random port mapping for PostgreSQL
+    networks:
+      - pantriq-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: pantriq-redis
+    ports:
+      - "62943:6379" # Random port mapping for Redis
+    networks:
+      - pantriq-network
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: pantriq-kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+    ports:
+      - "54987:9092" # Random port mapping for Kafka
+    depends_on:
+      - zookeeper
+    networks:
+      - pantriq-network
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: pantriq-zookeeper
+    ports:
+      - "62257:2181" # Random port mapping for Zookeeper
+    networks:
+      - pantriq-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: pantriq-grafana
+    ports:
+      - "48763:3000" # Random port mapping for Grafana
+    networks:
+      - pantriq-network
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pantriq-prometheus
+    ports:
+      - "50897:9090" # Random port mapping for Prometheus
+    networks:
+      - pantriq-network
+    volumes:
+      - prometheus_data:/prometheus
+
+volumes:
+  postgres_data:
+  grafana_data:
+  prometheus_data:
+
+networks:
+  pantriq-network:
+    driver: bridge

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                     // Use modern JavaScript features
+    "module": "CommonJS",                  // Module system compatible with Node.js
+    "lib": ["ES2020", "DOM"],              // Include libraries for modern JavaScript and DOM (optional for Redis/Kafka)
+    "outDir": "./dist",                    // Output directory for compiled files
+    "rootDir": "./src",                    // Root directory of the source code
+    "strict": true,                        // Enable all strict type-checking options
+    "esModuleInterop": true,               // Enable interoperation between CommonJS and ES Modules
+    "resolveJsonModule": true,             // Allow importing JSON modules
+    "emitDecoratorMetadata": true,         // Emit metadata for decorators (used by NestJS)
+    "experimentalDecorators": true,        // Enable experimental support for decorators
+    "skipLibCheck": true,                  // Skip type checking for libraries (improves build time)
+    "forceConsistentCasingInFileNames": true, // Ensure consistent casing in imports
+    "types": ["node", "passport-local"]    // Include type definitions for Node.js and passport-local
+  },
+  "include": [
+    "src/**/*"                            // Include all files in the `src` directory
+  ],
+  "exclude": [
+    "node_modules",                       // Exclude dependencies
+    "dist",                               // Exclude compiled files
+    "test",                               // Optional: exclude test files if they're not ready
+    "scripts"                             // Optional: exclude build or utility scripts
+  ]
+}
